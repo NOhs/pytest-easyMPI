@@ -11,7 +11,9 @@ Short example
 -------------
 
 The following shows an example of how to combine a serial and a parallel
-test in a single test file. The parallel test is run using 4 MPI ranks::
+test in a single test file. The parallel test is run using 4 MPI ranks:
+
+.. code:: python
 
     from pytest_MPI import mpi_parallel
     from mpi4py import MPI
