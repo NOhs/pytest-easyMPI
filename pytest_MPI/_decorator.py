@@ -104,12 +104,13 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                             "pytest_MPI._print_capture",
                             test_name,
                         ],
-                        stderr=subprocess.STDOUT,
+                        #stderr=subprocess.STDOUT,
                         universal_newlines=True,
                     )
                 except subprocess.CalledProcessError as error:
                     failed = True
                     alternative_output = error.output
+                    raise error
 
                 errors = []
                 for i in range(nprocs):
