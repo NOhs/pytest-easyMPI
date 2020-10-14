@@ -136,7 +136,8 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                     if errors:
                         pytest.fail(get_summary(message))
                     else:
-                        pytest.fail(alternative_output)
+                        print(alternative_output)
+                        assert False
 
 
             else:
