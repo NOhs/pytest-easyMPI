@@ -105,6 +105,7 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                             test_name,
                         ],
                         stderr=subprocess.STDOUT,
+                        universal_newlines=True,
                     )
                 except subprocess.CalledProcessError as error:
                     failed = True
@@ -135,6 +136,7 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                         pytest.fail(get_summary(message))
                     else:
                         pytest.fail(alternative_output)
+
 
             else:
                 func(*args, **kwargs)
