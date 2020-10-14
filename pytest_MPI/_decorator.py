@@ -60,8 +60,7 @@ def mpi_executable(preferred_executable=None):
             return executable
 
     raise RuntimeError(
-        "Could not find an mpi installation. Make sure your PATH is set "
-        "correctly."
+        "Could not find an mpi installation. Make sure your PATH is set " "correctly."
     )
 
 
@@ -85,7 +84,7 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
     def dec(func):
         @functools.wraps(func)
         def replacement_func(*args, **kwargs):
-            #__tracebackhide__ = True
+            # __tracebackhide__ = True
             if not in_mpi_session():
                 executable = mpi_executable(mpi_executable_name)
                 test_name = get_pytest_input(func)
@@ -109,27 +108,25 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                     )
                 except subprocess.CalledProcessError as error:
                     failed = True
-                    #print(error.output.decode('utf-8'))
+                    # print(error.output.decode('utf-8'))
                     errors = []
                     for i in range(nprocs):
-                        file_name = f'{get_filename(test_name)}_{i}'
+                        file_name = f"{get_filename(test_name)}_{i}"
                         if os.path.isfile(file_name):
                             with open(file_name) as f:
                                 rank_output = f.read()
                             os.remove(file_name)
-                            
+
                             if not contains_failure(rank_output):
                                 continue
 
                             errors.append((i, get_traceback(rank_output)))
 
-
                     for rank, message in errors:
-                        header = f'{Style.BRIGHT}{Fore.RED}Rank {rank}{Style.RESET_ALL} reported an error:'
+                        header = f"{Style.BRIGHT}{Fore.RED}Rank {rank}{Style.RESET_ALL} reported an error:"
                         print("\n" + header)
                         print("-" * len(header) + "\n")
                         print(message)
-
 
                 if failed:
                     pytest.fail(get_summary(message))

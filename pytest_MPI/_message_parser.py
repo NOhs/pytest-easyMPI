@@ -1,7 +1,9 @@
 import re
 
+
 def contains_failure(message):
     return "= FAILURES =" in message
+
 
 def get_traceback(message):
     try:
@@ -13,17 +15,14 @@ def get_traceback(message):
         index = message.index("\n", index + 1)
 
     end_index = message.rindex("short test summary info")
-    end_index = message.rindex("\n", end_index)+1
-    print(index, end_index)
+    end_index = message.rindex("\n", end_index) + 1
+
     return message[index:end_index]
 
 
 def get_summary(message):
-    groups = re.search(r"=* short test summary info =*\nFAILED .*?::.*? - (.*)", message).groups()
+    groups = re.search(
+        r"=* short test summary info =*\nFAILED .*?::.*? - (.*)", message
+    ).groups()
 
     return groups[0]
-
-
-
-
-
