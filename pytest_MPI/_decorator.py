@@ -120,13 +120,15 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                             if not contains_failure(rank_output):
                                 continue
 
-                            errors.append((i, get_traceback(rank_output)))
+                            errors.append((i, rank_output))
 
                     for rank, message in errors:
-                        header = f"{Style.BRIGHT}{Fore.RED}Rank {rank}{Style.RESET_ALL} reported an error:"
+                        header_1 = f"Rank {rank}"
+                        header_2 = f" reported an error:"
+                        header = f"{Style.BRIGHT}{Fore.RED}{header_1}{Style.RESET_ALL}{header_2}"
                         print("\n" + header)
-                        print("-" * len(header) + "\n")
-                        print(message)
+                        print("- " * (len(header_1 + header_2)//2 + 1))
+                        print(get_traceback(message))
 
                 if failed:
                     pytest.fail(get_summary(message))

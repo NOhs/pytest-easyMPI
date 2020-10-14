@@ -15,7 +15,7 @@ def get_traceback(message):
         index = message.index("\n", index + 1)
 
     end_index = message.rindex("short test summary info")
-    end_index = message.rindex("\n", end_index) + 1
+    end_index = message.rindex("\n", 0, end_index)
 
     return message[index:end_index]
 
