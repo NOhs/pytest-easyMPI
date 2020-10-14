@@ -1,6 +1,8 @@
-import subprocess
 import sys
+import warnings
 from argparse import ArgumentParser
+
+import pytest
 
 from mpi4py import MPI
 
@@ -12,23 +14,15 @@ parser.add_argument("test_name")
 
 args = parser.parse_args()
 
-try:
-    subprocess.check_output(
-        [sys.executable, "-m", "pytest", "--color=yes", MPI_SESSION_ARGUMENT]
-        + [args.test_name],
-        stderr=subprocess.STDOUT,
-        universal_newlines=True,
-    )
-except subprocess.CalledProcessError as error:
-    with open(
-        f"{get_filename(args.test_name)}_{MPI.COMM_WORLD.Get_rank()}", "w"
-    ) as f:
-        test_name = args.test_name.split(":")[-1]
-        output = error.output.split("\n")
-        for i in range(len(output)):
-            if test_name in output[i]:
-                break
+sys.stdout = open(f"{get_filename(args.test_name)}_{MPI.COMM_WORLD.Get_rank()}", "w")
 
-        output = "\n".join(output[i + 1 : -2])
-        f.write(output)
-    sys.exit(error.returncode)
+return_code = pytest.main(
+    [
+        "--color=yes",
+        MPI_SESSION_ARGUMENT,
+        args.test_name,
+        "-W ignore::pytest.PytestAssertRewriteWarning",
+    ]
+)
+
+sys.exit(return_code)
