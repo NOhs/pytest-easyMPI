@@ -7,10 +7,12 @@ import subprocess
 import sys
 
 import pytest
+from colorama import Fore, Style
 from mpi4py import MPI
 
 from ._plugin import in_mpi_session
 from ._test_name_converter import get_filename, get_pytest_input
+from ._message_parser import contains_failure, get_traceback, get_summary
 
 
 def mpi_executable(preferred_executable=None):
@@ -83,11 +85,12 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
     def dec(func):
         @functools.wraps(func)
         def replacement_func(*args, **kwargs):
+            #__tracebackhide__ = True
             if not in_mpi_session():
                 executable = mpi_executable(mpi_executable_name)
                 test_name = get_pytest_input(func)
-                env = dict(os.environ)
-                env["PYTHONPATH"] = os.pathsep.join(sys.path)
+
+                failed = False
 
                 try:
                     mpi_subprocess_output = subprocess.check_output(
@@ -97,27 +100,39 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                             str(nprocs),
                             sys.executable,
                             "-m",
+                            "mpi4py",
+                            "-m",
                             "pytest_MPI._print_capture",
                             test_name,
                         ],
-                        env=env,
                         stderr=subprocess.STDOUT,
                     )
-
                 except subprocess.CalledProcessError as error:
-                    print(error.output.decode('utf-8'))
+                    failed = True
+                    #print(error.output.decode('utf-8'))
                     errors = []
                     for i in range(nprocs):
                         file_name = f'{get_filename(test_name)}_{i}'
                         if os.path.isfile(file_name):
                             with open(file_name) as f:
-                                errors.append((i, f.read()))
+                                rank_output = f.read()
                             os.remove(file_name)
+                            
+                            if not contains_failure(rank_output):
+                                continue
+
+                            errors.append((i, get_traceback(rank_output)))
+
 
                     for rank, message in errors:
-                        print(f'Rank {rank} reported an error:\n{message}')
+                        header = f'{Style.BRIGHT}{Fore.RED}Rank {rank}{Style.RESET_ALL} reported an error:'
+                        print("\n" + header)
+                        print("-" * len(header) + "\n")
+                        print(message)
 
-                    assert False
+
+                if failed:
+                    pytest.fail(get_summary(message))
 
             else:
                 func(*args, **kwargs)

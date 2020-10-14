@@ -1,3 +1,4 @@
+colorama
 mpi4py
 pbr
 pytest
