@@ -110,26 +110,27 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                 except subprocess.CalledProcessError as error:
                     failed = True
                     alternative_output = error.output
-                    errors = []
-                    for i in range(nprocs):
-                        file_name = f"{get_filename(test_name)}_{i}"
-                        if os.path.isfile(file_name):
-                            with open(file_name) as f:
-                                rank_output = f.read()
-                            os.remove(file_name)
 
-                            if not contains_failure(rank_output):
-                                continue
+                errors = []
+                for i in range(nprocs):
+                    file_name = f"{get_filename(test_name)}_{i}"
+                    if os.path.isfile(file_name):
+                        with open(file_name) as f:
+                            rank_output = f.read()
+                        os.remove(file_name)
 
-                            errors.append((i, rank_output))
+                        if not contains_failure(rank_output):
+                            continue
 
-                    for rank, message in errors:
-                        header_1 = f"Rank {rank}"
-                        header_2 = f" reported an error:"
-                        header = f"{Style.BRIGHT}{Fore.RED}{header_1}{Style.RESET_ALL}{header_2}"
-                        print("\n" + header)
-                        print("- " * (len(header_1 + header_2)//2 + 1))
-                        print(get_traceback(message))
+                        errors.append((i, rank_output))
+
+                for rank, message in errors:
+                    header_1 = f"Rank {rank}"
+                    header_2 = f" reported an error:"
+                    header = f"{Style.BRIGHT}{Fore.RED}{header_1}{Style.RESET_ALL}{header_2}"
+                    print("\n" + header)
+                    print("- " * (len(header_1 + header_2)//2 + 1))
+                    print(get_traceback(message))
 
                 if failed:
                     if errors:
