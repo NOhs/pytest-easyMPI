@@ -1,0 +1,24 @@
+language: generic
+
+os: osx
+osx_image: xcode12.2
+addons:
+  homebrew:
+    packages:
+      - open-mpi
+      - python3
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+before_cache:
+  - brew cleanup
+install:
+  - python3 -m venv venv
+  - source venv/bin/activate
+  - pip install .
+
+script:
+  - export OMPI_MCA_rmaps_base_oversubscribe=yes
+  - export PMIX_MCA_gds=hash
+  - export TMPDIR=/tmp
+  - pytest tests
