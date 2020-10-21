@@ -1,41 +1,44 @@
-jobs:
+matrix:
   include:
-    - os: osx
-      language: generic
-      osx_image: xcode12.2
-      addons:
+  - os: osx
+    language: generic
+    osx_image: xcode12.2
+    env: MPI_VERSION=OPENMPI
+    addons:
       homebrew:
         packages:
           - open-mpi
           - python3
-          update: true
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-      before_cache:
-        - brew cleanup
-    - os: linux
-      dist: bionic
-      language: python
-      python: "3.9"
-      env: MPI_version=MPICH
-      addons:
-        apt:
-          packages:
-            - open-mpi
-            - python3.9-dev
-            - python3.9-venv
-    - os: linux
-      dist: bionic
-      language: python
-      python: "3.9"
-      env: MPI_VERSION=OPENMPI
-      addons:
-        apt:
-          packages:
-            - mpich
-            - python3.9-dev
-            - python3.9-venv
+        update: true
+    cache:
+      directories:
+        - $HOME/Library/Caches/Homebrew
+    before_cache:
+      - brew cleanup
+  - os: linux
+    dist: focal
+    language: python
+    python: "3.9-dev"
+    env: MPI_version=MPICH
+    addons:
+      apt:
+        packages:
+          - openmpi-bin
+          - libopenmpi-dev
+          - python3.9-dev
+          - python3.9-venv
+  - os: linux
+    dist: focal
+    language: python
+    python: "3.9-dev"
+    env: MPI_VERSION=OPENMPI
+    addons:
+      apt:
+        packages:
+          - mpich
+          - libmpich-dev
+          - python3.9-dev
+          - python3.9-venv
 
 install:
   - python3 -m venv venv
@@ -44,6 +47,4 @@ install:
 
 script:
   - export OMPI_MCA_rmaps_base_oversubscribe=yes
-#  - export PMIX_MCA_gds=hash
-#  - export TMPDIR=/tmp
   - pytest tests
