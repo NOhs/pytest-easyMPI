@@ -19,7 +19,7 @@ matrix:
     dist: focal
     language: python
     python: "3.9-dev"
-    env: MPI_version=MPICH
+    env: MPI_VERSION=MPICH
     addons:
       apt:
         packages:
