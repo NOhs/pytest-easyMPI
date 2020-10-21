@@ -16,13 +16,15 @@ test in a single test file. The parallel test is run using 4 MPI ranks:
 .. code:: python
 
     from pytest_MPI import mpi_parallel
-    from mpi4py import MPI
 
     def test_serial():
         assert True
 
     @mpi_parallel(4)
     def test_parallel():
+        # Importing mpi inside the test that needs it (required)
+        from mpi4py import MPI
+    
         data = MPI.COMM_WORLD.gather(MPI.COMM_WORLD.Get_rank())
         if MPI.COMM_WORLD.Get_rank() == 0:
             assert sum(range(MPI.COMM_WORLD.Get_size())) == sum(data)
