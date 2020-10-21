@@ -1,3 +1,13 @@
+.. image:: https://travis-ci.org/NOhs/pytest-MPI.svg?branch=master
+    :target: https://travis-ci.org/NOhs/pytest-MPI
+
+.. image:: https://img.shields.io/badge/License-MIT-blue.svg
+    :target: https://opensource.org/licenses/MIT
+
+.. image:: https://app.codacy.com/project/badge/Grade/23f4495e7d19402f93aa29b92885f281
+    :target: https://www.codacy.com/gh/NOhs/pytest-MPI/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NOhs/pytest-MPI&amp;utm_campaign=Badge_Grade
+
+
 Welcome to the pytest-MPI package!
 ==================================
 
