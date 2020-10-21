@@ -1,0 +1,6 @@
+# prospector configuration file
+
+pep257:
+    disable: [
+        D212,
+    ]
