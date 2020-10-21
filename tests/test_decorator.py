@@ -1,4 +1,4 @@
-from pytest_MPI import mpi_parallel
+from pytest_easyMPI import mpi_parallel
 
 @mpi_parallel(4)
 def test_me():

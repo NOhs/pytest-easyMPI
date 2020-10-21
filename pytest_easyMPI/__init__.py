@@ -14,7 +14,7 @@ test in a single test file. The parallel test is run using 4 MPI ranks:
 
 .. code:: python
 
-    from pytest_MPI import mpi_parallel
+    from pytest_easyMPI import mpi_parallel
     from mpi4py import MPI
 
     def test_serial():
@@ -36,6 +36,6 @@ from ._decorator import mpi_parallel
 
 __all__ = ["mpi_parallel"]
 
-_v = VersionInfo("pytest_MPI").semantic_version()
+_v = VersionInfo("pytest_easyMPI").semantic_version()
 __version__ = _v.release_string()
 version_info = _v.version_tuple()

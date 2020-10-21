@@ -107,7 +107,7 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                             "-m",
                             "mpi4py",
                             "-m",
-                            "pytest_MPI._print_capture",
+                            "pytest_easyMPI._print_capture",
                             test_name,
                         ],
                         universal_newlines=True,
