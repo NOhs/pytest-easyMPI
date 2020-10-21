@@ -1,11 +1,12 @@
 # prospector configuration file
-strictness: veryhigh
 doc-warnings: true
 
+inherits:
+  - default
+
 pep257:
-    disable: [
-        D212,
-    ]
+    disable:
+      - D212
 
 ignore-paths:
   - tests
