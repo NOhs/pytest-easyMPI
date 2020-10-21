@@ -7,10 +7,17 @@ import subprocess
 import sys
 
 import pytest
-from mpi4py import MPI
+from colorama import Fore, Style
 
+from ._mpi_test_parser import (
+    END_OF_TEST,
+    contains_failure,
+    get_summary,
+    get_traceback,
+    temp_ouput_file,
+    get_pytest_input,
+)
 from ._plugin import in_mpi_session
-from ._test_name_converter import get_filename, get_pytest_input
 
 
 def mpi_executable(preferred_executable=None):
@@ -58,8 +65,7 @@ def mpi_executable(preferred_executable=None):
             return executable
 
     raise RuntimeError(
-        "Could not find an mpi installation. Make sure your PATH is set "
-        "correctly."
+        "Could not find an mpi installation. Make sure your PATH is set correctly."
     )
 
 
@@ -83,11 +89,12 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
     def dec(func):
         @functools.wraps(func)
         def replacement_func(*args, **kwargs):
+            # __tracebackhide__ = True
             if not in_mpi_session():
                 executable = mpi_executable(mpi_executable_name)
                 test_name = get_pytest_input(func)
-                env = dict(os.environ)
-                env["PYTHONPATH"] = os.pathsep.join(sys.path)
+
+                failed = False
 
                 try:
                     mpi_subprocess_output = subprocess.check_output(
@@ -97,27 +104,54 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                             str(nprocs),
                             sys.executable,
                             "-m",
+                            "mpi4py",
+                            "-m",
                             "pytest_MPI._print_capture",
                             test_name,
                         ],
-                        env=env,
-                        stderr=subprocess.STDOUT,
+                        universal_newlines=True,
                     )
-
                 except subprocess.CalledProcessError as error:
-                    print(error.output.decode('utf-8'))
-                    errors = []
-                    for i in range(nprocs):
-                        file_name = f'{get_filename(test_name)}_{i}'
-                        if os.path.isfile(file_name):
-                            with open(file_name) as f:
-                                errors.append((i, f.read()))
-                            os.remove(file_name)
+                    alternative_output = error.output
 
-                    for rank, message in errors:
-                        print(f'Rank {rank} reported an error:\n{message}')
+                errors = []
+                for i in range(nprocs):
+                    file_name = f"{temp_ouput_file(test_name)}_{i}"
+                    if os.path.isfile(file_name):
+                        with open(file_name) as f:
+                            rank_output = f.read()
+                        os.remove(file_name)
 
-                    assert False
+                        if not rank_output.endswith(END_OF_TEST):
+                            failed = True
+                            break
+
+                        if not contains_failure(rank_output):
+                            continue
+
+                        failed = True
+                        errors.append((i, rank_output))
+
+                    else:
+                        failed = True
+                        break
+
+                for rank, message in errors:
+                    header_1 = f"Rank {rank}"
+                    header_2 = f" reported an error:"
+                    header = (
+                        f"{Style.BRIGHT}{Fore.RED}{header_1}{Style.RESET_ALL}{header_2}"
+                    )
+                    print("\n" + header)
+                    print("- " * (len(header_1 + header_2) // 2 + 1))
+                    print(get_traceback(message))
+
+                if failed:
+                    if errors:
+                        pytest.fail(get_summary(message))
+                    else:
+                        print(alternative_output)
+                        assert False
 
             else:
                 func(*args, **kwargs)

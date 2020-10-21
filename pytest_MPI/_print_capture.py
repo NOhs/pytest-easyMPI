@@ -1,34 +1,37 @@
-import subprocess
+"""Wrapper for MPI calls.
+
+This script is called to run pytest in an MPI session and
+pipe all output to files that are later gathered from all
+MPI threads.
+"""
+
 import sys
+import warnings
 from argparse import ArgumentParser
+
+import pytest
 
 from mpi4py import MPI
 
 from ._plugin import MPI_SESSION_ARGUMENT
-from ._test_name_converter import get_filename
+from ._mpi_test_parser import temp_ouput_file, END_OF_TEST
 
 parser = ArgumentParser()
 parser.add_argument("test_name")
 
 args = parser.parse_args()
 
-try:
-    subprocess.check_output(
-        [sys.executable, "-m", "pytest", "--color=yes", MPI_SESSION_ARGUMENT]
-        + [args.test_name],
-        stderr=subprocess.STDOUT,
-        universal_newlines=True,
-    )
-except subprocess.CalledProcessError as error:
-    with open(
-        f"{get_filename(args.test_name)}_{MPI.COMM_WORLD.Get_rank()}", "w"
-    ) as f:
-        test_name = args.test_name.split(":")[-1]
-        output = error.output.split("\n")
-        for i in range(len(output)):
-            if test_name in output[i]:
-                break
+sys.stdout = open(f"{temp_ouput_file(args.test_name)}_{MPI.COMM_WORLD.Get_rank()}", "w")
 
-        output = "\n".join(output[i + 1 : -2])
-        f.write(output)
-    sys.exit(error.returncode)
+return_code = pytest.main(
+    [
+        "--color=yes",
+        MPI_SESSION_ARGUMENT,
+        args.test_name,
+        "-W ignore::pytest.PytestAssertRewriteWarning",
+    ]
+)
+
+print(END_OF_TEST, end="")
+
+sys.exit(return_code)
