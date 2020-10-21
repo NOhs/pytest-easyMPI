@@ -1,6 +1,29 @@
 # prospector configuration file
+strictness: veryhigh
+doc-warnings: true
 
 pep257:
     disable: [
         D212,
     ]
+
+ignore-paths:
+  - tests
+
+mccabe:
+  run: true
+
+dodgy:
+  run: true
+
+pep257:
+  run: true
+
+pydocstyle:
+  run: true
+
+pyflakes:
+  run: true
+
+pyroma:
+  run: true
