@@ -22,7 +22,8 @@ test in a single test file. The parallel test is run using 4 MPI ranks:
 
     @mpi_parallel(4)
     def test_parallel():
-        # Importing mpi inside the test that needs it (required)
+        # Import MPI only inside the test that needs it
+        # (to avoid spawning too many MPI communicators)
         from mpi4py import MPI
     
         data = MPI.COMM_WORLD.gather(MPI.COMM_WORLD.Get_rank())
