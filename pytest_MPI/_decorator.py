@@ -1,4 +1,3 @@
-import contextlib
 import functools
 import operator
 import os
@@ -21,7 +20,8 @@ from ._plugin import in_mpi_session
 
 
 def mpi_executable(preferred_executable=None):
-    """Return an mpi executable found on the current system.
+    """
+    Return an mpi executable found on the current system.
 
     Depending on your MPI implementation, the executable name
     to run an MPI application may differ. This function will
@@ -71,8 +71,9 @@ def mpi_executable(preferred_executable=None):
 
 def mpi_parallel(nprocs: int, mpi_executable_name=None):
     """
-    Decorate a test to run in an MPI environment. The test is
-    spawned via::
+    Decorate a test to run in an MPI environment.
+
+    The test is spawned via::
 
         <mpi_executable_name> -np <nprocs> <python_executable>...
 
@@ -84,6 +85,7 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
         The mpi executable to use when spawning the mpi tests.
         By default this function uses :any:`mpi_executable`
         to find a valid mpi executable.
+
     """
 
     def dec(func):
@@ -97,7 +99,7 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                 failed = False
 
                 try:
-                    mpi_subprocess_output = subprocess.check_output(
+                    subprocess.check_output(
                         [
                             executable,
                             "-np",
@@ -138,7 +140,7 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
 
                 for rank, message in errors:
                     header_1 = f"Rank {rank}"
-                    header_2 = f" reported an error:"
+                    header_2 = " reported an error:"
                     header = (
                         f"{Style.BRIGHT}{Fore.RED}{header_1}{Style.RESET_ALL}{header_2}"
                     )

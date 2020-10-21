@@ -1,4 +1,5 @@
-"""Plugin to run MPI unit-tests using pytest
+"""
+Plugin to run MPI unit-tests using pytest
 
 This package aims at making MPI code testing as similar to testing regular
 serial code as possible. In doing so hopefully the users of this plugin can
@@ -32,7 +33,6 @@ The test can then be run by calling::
 """
 from pbr.version import VersionInfo
 from ._decorator import mpi_parallel
-from ._plugin import in_mpi_session
 
 _v = VersionInfo("mgen").semantic_version()
 __version__ = _v.release_string()
