@@ -1,8 +1,7 @@
-language: generic
-
 jobs:
   include:
     - os: osx
+      language: generic
       osx_image: xcode12.2
       addons:
       homebrew:
