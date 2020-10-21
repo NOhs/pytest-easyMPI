@@ -1,6 +1,9 @@
 .. image:: https://travis-ci.org/NOhs/pytest-easyMPI.svg?branch=master
     :target: https://travis-ci.org/NOhs/pytest-easyMPI
 
+.. image:: https://badge.fury.io/py/pytest-easyMPI.svg
+    :target: https://badge.fury.io/py/pytest-easyMPI
+
 .. image:: https://img.shields.io/badge/License-MIT-blue.svg
     :target: https://opensource.org/licenses/MIT
 
