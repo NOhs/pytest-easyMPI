@@ -9,7 +9,7 @@
 
 
 Welcome to the pytest-easyMPI package!
-==================================
+======================================
 
 This package aims at making MPI code testing as similar to testing
 regular serial code as possible. In doing so hopefully the users of
