@@ -1,8 +1,4 @@
-"""
-Module making commandline options available to pytest which are
-necessary for mpitest.
-"""
-import pytest
+"""Additional Commandline option for pytest."""
 
 
 MPI_SESSION_ARGUMENT = "--in_mpi_session"
@@ -16,7 +12,8 @@ _IN_MPI_SESSION = False
 
 
 def in_mpi_session():
-    """Return if the current test is run with the mpi session argument
+    """
+    Return if the current test is run with the mpi session argument.
 
     Returns
     -------
@@ -29,7 +26,8 @@ def in_mpi_session():
 
 
 def pytest_addoption(parser):
-    """Add option `--in_mpi_session` to commandline options of pytest.
+    """
+    Add option `--in_mpi_session` to commandline options of pytest.
 
     The default value is set to `False` so that it is
     not activated by accident.
@@ -49,7 +47,8 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    """Set `IN_MPI_SESSION` module variable based on command line options
+    """
+    Set `IN_MPI_SESSION` module variable based on command line options.
 
     Arguments
     ---------

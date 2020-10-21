@@ -3,7 +3,8 @@ import re
 
 
 def get_pytest_input(func):
-    """Convert function object to pytest input string.
+    """
+    Convert function object to pytest input string.
 
     Pytest allows the user to pass the name of an individual
     test to run. This function takes a function object and converts
@@ -30,7 +31,8 @@ def get_pytest_input(func):
 
 
 def temp_ouput_file(pytest_input):
-    """Return the name of the temporary output file for a given test.
+    """
+    Return the name of the temporary output file for a given test.
 
     Arguments
     ---------
@@ -48,7 +50,8 @@ def temp_ouput_file(pytest_input):
 
 
 def contains_failure(message):
-    """Check if a given pytest contained a failure.
+    """
+    Check if a given pytest contained a failure.
 
     Arguments
     ---------
@@ -65,7 +68,8 @@ def contains_failure(message):
 
 
 def get_traceback(message):
-    """Extract traceback from pytest output
+    """
+    Extract traceback from pytest output
 
     Parameters
     ----------
@@ -97,7 +101,8 @@ def get_traceback(message):
 
 
 def get_summary(message):
-    """Return summary statement from pytest output
+    """
+    Return summary statement from pytest output
 
     Parameters
     ----------
@@ -117,7 +122,8 @@ def get_summary(message):
 
 
 END_OF_TEST = "%<<<<END_OF_TEST>>>>%"
-"""Placeholder at the end of an mpi output file.
+"""
+Placeholder at the end of an mpi output file.
 
 Can be used to check if the entire test suite ran through.
 """
