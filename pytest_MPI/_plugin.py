@@ -1,4 +1,4 @@
-"""Additional Commandline option for pytest"""
+"""Additional Commandline option for pytest."""
 
 
 MPI_SESSION_ARGUMENT = "--in_mpi_session"

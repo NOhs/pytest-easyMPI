@@ -1,4 +1,5 @@
-"""Wrapper for MPI calls.
+"""
+Wrapper for MPI calls.
 
 This script is called to run pytest in an MPI session and
 pipe all output to files that are later gathered from all

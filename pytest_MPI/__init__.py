@@ -1,4 +1,5 @@
-"""Plugin to run MPI unit-tests using pytest
+"""
+Plugin to run MPI unit-tests using pytest
 
 This package aims at making MPI code testing as similar to testing regular
 serial code as possible. In doing so hopefully the users of this plugin can
