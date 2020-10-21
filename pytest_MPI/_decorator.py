@@ -8,11 +8,16 @@ import sys
 
 import pytest
 from colorama import Fore, Style
-from mpi4py import MPI
 
+from ._mpi_test_parser import (
+    END_OF_TEST,
+    contains_failure,
+    get_summary,
+    get_traceback,
+    temp_ouput_file,
+    get_pytest_input,
+)
 from ._plugin import in_mpi_session
-from ._test_name_converter import get_filename, get_pytest_input
-from ._message_parser import contains_failure, get_traceback, get_summary
 
 
 def mpi_executable(preferred_executable=None):
@@ -60,7 +65,7 @@ def mpi_executable(preferred_executable=None):
             return executable
 
     raise RuntimeError(
-        "Could not find an mpi installation. Make sure your PATH is set " "correctly."
+        "Could not find an mpi installation. Make sure your PATH is set correctly."
     )
 
 
@@ -104,33 +109,41 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                             "pytest_MPI._print_capture",
                             test_name,
                         ],
-                        #stderr=subprocess.STDOUT,
                         universal_newlines=True,
                     )
                 except subprocess.CalledProcessError as error:
-                    failed = True
                     alternative_output = error.output
-                    raise error
 
                 errors = []
                 for i in range(nprocs):
-                    file_name = f"{get_filename(test_name)}_{i}"
+                    file_name = f"{temp_ouput_file(test_name)}_{i}"
                     if os.path.isfile(file_name):
                         with open(file_name) as f:
                             rank_output = f.read()
                         os.remove(file_name)
 
+                        if not rank_output.endswith(END_OF_TEST):
+                            failed = True
+                            break
+
                         if not contains_failure(rank_output):
                             continue
 
+                        failed = True
                         errors.append((i, rank_output))
+
+                    else:
+                        failed = True
+                        break
 
                 for rank, message in errors:
                     header_1 = f"Rank {rank}"
                     header_2 = f" reported an error:"
-                    header = f"{Style.BRIGHT}{Fore.RED}{header_1}{Style.RESET_ALL}{header_2}"
+                    header = (
+                        f"{Style.BRIGHT}{Fore.RED}{header_1}{Style.RESET_ALL}{header_2}"
+                    )
                     print("\n" + header)
-                    print("- " * (len(header_1 + header_2)//2 + 1))
+                    print("- " * (len(header_1 + header_2) // 2 + 1))
                     print(get_traceback(message))
 
                 if failed:
@@ -139,7 +152,6 @@ def mpi_parallel(nprocs: int, mpi_executable_name=None):
                     else:
                         print(alternative_output)
                         assert False
-
 
             else:
                 func(*args, **kwargs)
