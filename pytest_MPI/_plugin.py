@@ -1,7 +1,4 @@
-"""
-Module making commandline options available to pytest which are
-necessary for mpitest.
-"""
+"""Additional Commandline option for pytest"""
 
 
 MPI_SESSION_ARGUMENT = "--in_mpi_session"
