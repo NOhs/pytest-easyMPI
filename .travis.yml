@@ -15,11 +15,28 @@ matrix:
         - $HOME/Library/Caches/Homebrew
     before_cache:
       - brew cleanup
+  - os: osx
+    language: generic
+    osx_image: xcode12.2
+    env: MPI_VERSION=MPICH
+    addons:
+      homebrew:
+        packages:
+          - mpich
+          - python3
+        update: true
+    cache:
+      directories:
+        - $HOME/Library/Caches/Homebrew
+    before_cache:
+      - brew cleanup
   - os: linux
     dist: focal
     language: python
     python: "3.9-dev"
-    env: MPI_VERSION=MPICH
+    env: 
+      - MPI_VERSION=MPICH
+      - deploy=True
     addons:
       apt:
         packages:
@@ -56,6 +73,6 @@ deploy:
     secure: "SZayvE9rMxiyXpaj4yagUN2zGxuGCiewtokWVQcI1WlLu+H68MPoOUd1n0qAh+j+NidShZkkJwQv5wdBRxda+RU1Q4IC7cqWIemaRPtQ4AW8lGCw/ijcCTiceKeW3GK4vzLuo6/XoGZl6HlPe72+aHKliP8oTHzCgCN57kcKzMKQSIBG8grjM6ZD7EGjEWPrao1YtXbJEAt+kQNyQ8oTDCJmRs4lT4FoNnGoo4mv1O4R6gW/QEC6mj8FKt3bolZJsgPEdFF0AtXa/OUIeMtpzcEKbnHqLhpSZ0zW/rvO7KcbZsPzmiX7wdeuQVDmBS9DmKgqg4uagHBeBkpx4uFLF6qNM9tLH/FnK+1ql8xVjGBDDIb8901jbqiHaj048zGnhOOx5eW+/IAIEEPvqNyPASUhBvYeC+L7Mu6Z5CrBB3i4xWDWvH3oB/PjG4YvbOt8Jg54GhgBqDBMfh989mq4evJ0Dw/YOQz1l9NBu2jMZ6MDZjnz4meOlUI08cqyZs+6V2b87i+G48tDeAzV3LFnTbf4SAYjz4+RHC6u38gI0fSw47HyIWEU+1ZqHcBSlJKXz5bn9Hy9hIR9kdeseoB9GFTqYRDX8ispOs9N+4w2z90xCh3dX0AniHjYTM3lPfN1bmTBHOK7prfgmr9eJEKChLlXcgu1zwVvO/RZdxPl/qI="
   on:
     tags: true
-    condition: $MPI_VERSION = MPICH
+    condition: $deploy = True
   skip_existing: true
   skip_cleanup: true
